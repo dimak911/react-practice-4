@@ -1,58 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React, { useState } from "react";
+import { Button } from "./components/Button";
+import { useDispatch } from "react-redux";
+import { fetchUsers } from "./redux/users/usersOperations";
+import { UsersList } from "./components/UsersList/UsersList";
+import { useSelector } from "react-redux";
+import { selectUsers } from "./redux/users/usersSelectors";
+import { UserForm } from "./components/UserForm/UserForm";
 
-function App() {
+export const App = () => {
+  const dispatch = useDispatch();
+  const users = useSelector(selectUsers);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  const clickHandler = () => {
+    dispatch(fetchUsers());
+  };
+
+  const openForm = () => {
+    setIsFormOpen(true);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
+    <>
+      {!users.length > 0 ? (
+        <Button text="Show users list" clickHandler={clickHandler} />
+      ) : (
+        <>
+          <Button text="Add user" clickHandler={openForm} />
+          {isFormOpen && <UserForm />}
+          <UsersList />
+        </>
+      )}
+    </>
   );
-}
-
-export default App;
+};
